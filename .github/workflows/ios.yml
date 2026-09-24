@@ -1,0 +1,40 @@
+name: Build iOS
+
+on:
+  workflow_dispatch:
+  push:
+    branches:
+      - main
+
+jobs:
+  build:
+    runs-on: macos-latest
+
+    steps:
+      - name: Baixar projeto
+        uses: actions/checkout@v4
+
+      - name: Configurar Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: npm
+
+      - name: Instalar dependências
+        run: npm install
+
+      - name: Preparar plataforma iOS
+        run: npx cordova platform add ios
+
+      - name: Compilar iOS
+        run: npx cordova build ios --debug
+
+      - name: Publicar artefatos iOS
+        uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: cirio-maraba-ios-build
+          path: |
+            platforms/ios/build/**/*.app
+            platforms/ios/**/*.xcarchive
+          if-no-files-found: warn
