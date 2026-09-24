@@ -1,0 +1,17 @@
+Você enviou um cartaz (2026) na conversa do chat.
+
+Para que o app web exiba o cartaz real, substitua o arquivo abaixo com a imagem que você forneceu:
+
+  www/assets/cartazes/2026.jpg
+
+Atualmente este arquivo ainda não existe no repositório. Para adicionar a imagem real, faça um dos passos abaixo:
+
+1) Copie manualmente o arquivo para a pasta `www/assets/cartazes/` no seu sistema de arquivos (Windows):
+   - Arraste o arquivo para a pasta no Explorer, ou
+   - Use o comando PowerShell:
+
+     Copy-Item -Path "C:\caminho\para\sua\imagem.jpg" -Destination "C:\apps\cirio\www\assets\cartazes\2026.jpg"
+
+2) Se preferir que eu coloque o arquivo, faça o upload do arquivo diretamente aqui no chat (envie o arquivo como anexo). Depois eu salvarei em `www/assets/cartazes/2026.jpg` automaticamente.
+
+Após adicionar o arquivo, recarregue a página: http://localhost:8000 e a galeria mostrará o cartaz 2026.

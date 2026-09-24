@@ -1,0 +1,384 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="Content-Security-Policy" content="default-src 'self' data: gap: blob:; script-src 'self' 'unsafe-inline' https://www.gstatic.com https://*.firebaseio.com https://cdnjs.cloudflare.com https://www.youtube.com https://www.youtube-nocookie.com; connect-src 'self' http://localhost:* http://127.0.0.1:* ws://localhost:* wss://localhost:* https://noembed.com https://www.youtube.com https://www.youtube-nocookie.com https://*.firebaseio.com wss://*.firebaseio.com https://*.googleapis.com https://router.project-osrm.org; style-src 'self' 'unsafe-inline' https://cdnjs.cloudflare.com; font-src 'self' data: https://cdnjs.cloudflare.com; img-src 'self' data: content: https:; media-src 'self' https:; object-src 'none'; base-uri 'self'; frame-ancestors 'none';">
+    <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+    <link rel="stylesheet" href="lib/framework7/framework7-bundle.min.css">
+    <link rel="stylesheet" href="lib/framework7-icons/framework7-icons.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- Mapa removido do app -->
+    <!-- Desabilitado temporariamente para testar layout padrão -->
+    <!-- <link rel="stylesheet" href="css/personalizado.css?v=4"> -->
+    <style>
+    /* Critical styles for stats cards (inlined to avoid load issues) */
+    .stats-grid{display:grid;grid-template-columns:repeat(6,1fr);gap:16px;margin:18px 0}
+    .stat-card{display:flex;flex-direction:column;gap:10px;border-radius:16px;padding:18px;color:#fff;min-height:140px;box-shadow:0 18px 40px rgba(15,23,42,0.08);}
+    .stat-icon{width:42px;height:42px;border-radius:12px;background:rgba(255,255,255,0.12);display:grid;place-items:center;font-size:18px}
+    .stat-title{font-size:13px;text-transform:uppercase;opacity:.95}
+    .stat-value{font-size:26px;font-weight:800}
+    .stat-desc{font-size:13px;opacity:.9}
+    .stat-card-blue{background:linear-gradient(180deg,#2563eb,#1d4ed8)}
+    .stat-card-green{background:linear-gradient(180deg,#22c55e,#16a34a)}
+    .stat-card-red{background:linear-gradient(180deg,#ef4444,#dc2626)}
+    .stat-card-grey{background:linear-gradient(180deg,#e2e8f0,#cbd5e1);color:#0f172a}
+    .stat-card-yellow{background:linear-gradient(180deg,#fbbf24,#f59e0b)}
+    .stat-card-purple{background:linear-gradient(180deg,#7c3aed,#6d28d9)}
+    .progress-wrapper{margin-top:18px;background:rgba(27,16,10,0.85);border-radius:16px;padding:12px;border:1px solid rgba(212,162,76,0.24)}
+    .progress-track{height:14px;background:rgba(255,255,255,0.12);border-radius:999px;overflow:hidden;border:1px solid rgba(255,255,255,0.08)}
+    .progress-track-fill{height:100%;width:0%;background:linear-gradient(90deg,rgba(212,162,76,0.95) 0%,rgba(255,208,124,0.98) 100%);transition:width .3s}
+    @media(max-width:1200px){.stats-grid{grid-template-columns:repeat(3,1fr)}}@media(max-width:768px){.stats-grid{grid-template-columns:repeat(2,1fr)}}
+    /* Sponsor banner (fixed footer) */
+    .sponsor-banner{
+      position:fixed;
+      left:16px;
+      right:16px;
+      bottom:calc(env(safe-area-inset-bottom,0px) + 108px);
+      height:84px;
+      max-height:110px;
+      background: linear-gradient(180deg, rgba(42,24,12,0.96), rgba(28,13,7,0.98));
+      border-radius:28px;
+      border:1px solid rgba(212,162,76,0.18);
+      box-shadow:0 28px 70px rgba(0,0,0,0.45);
+      z-index:9980;
+      display:flex;
+      align-items:center;
+      justify-content:center;
+      padding:0 14px;
+      overflow:hidden;
+    }
+    .sponsor-banner *{pointer-events:auto}
+    .sponsor-banner .sponsor-track{
+      width:100%;
+      height:100%;
+      display:flex;
+      align-items:center;
+      position:relative;
+      animation: sponsor-scroll var(--scroll-duration,18s) linear infinite;
+    }
+    .sponsor-banner .sponsor-list{
+      display:flex;
+      gap:18px;
+      align-items:center;
+      height:100%;
+      padding:0 12px;
+    }
+    .sponsor-banner .sponsor-item{
+      display:flex;
+      align-items:center;
+      justify-content:center;
+      min-width:140px;
+      padding:0 12px;
+      box-sizing:border-box;
+    }
+    .sponsor-banner .sponsor-logo{
+      max-height:52px;
+      max-width:180px;
+      object-fit:contain;
+    }
+    .sponsor-banner .sponsor-label{
+      display:inline-flex;
+      align-items:center;
+      justify-content:center;
+      padding:10px 18px;
+      border-radius:16px;
+      background: rgba(212,162,76,0.14);
+      color: #F4D28A;
+      font-size:15px;
+      font-weight:700;
+      text-transform:uppercase;
+      letter-spacing:.04em;
+      white-space:nowrap;
+      box-shadow:0 8px 24px rgba(0,0,0,0.22);
+      border:1px solid rgba(212,162,76,0.25);
+    }
+    @keyframes sponsor-scroll{
+      from{transform:translateX(0)}
+      to{transform:translateX(calc(var(--scroll-distance,100%) * -1))}
+    }
+    /* Ensure home page content has bottom padding so last card isn't hidden */
+    .page[data-name="home"] .page-content{padding-bottom:140px}
+    </style>
+    <style>
+      .leaflet-container {
+        position: relative !important;
+        overflow: hidden !important;
+        width: 100% !important;
+        height: 100% !important;
+        background: #1b100a !important;
+      }
+      .leaflet-pane,
+      .leaflet-map-pane,
+      .leaflet-tile-pane,
+      .leaflet-overlay-pane,
+      .leaflet-shadow-pane,
+      .leaflet-marker-pane,
+      .leaflet-tooltip-pane,
+      .leaflet-popup-pane {
+        position: absolute !important;
+        top: 0 !important;
+        left: 0 !important;
+        width: 100% !important;
+        height: 100% !important;
+      }
+      .leaflet-tile {
+        position: absolute !important;
+        width: 256px !important;
+        height: 256px !important;
+        margin: 0 !important;
+        padding: 0 !important;
+        border: 0 !important;
+      }
+    </style>
+    <link rel="stylesheet" href="css/index.css?v=7">
+    <title>Localiza a Berlinda</title>
+</head>
+<body>
+    <div id="app" class="framework7-root">
+        <div class="view view-main">
+            <!-- HOME: layout simples e direto conforme solicitado -->
+            <div class="page" data-name="home">
+                <div class="page-content">
+                    <div class="app-shell">
+                        <section class="hero-card" onclick="app.goToTracker()" role="button" aria-label="Abrir rastreador">
+                            <div class="hero-glow" aria-hidden="true"></div>
+                            <div class="hero-image" aria-hidden="true">
+                                <img src="img/Emblema.png" alt="Emblema da Berlinda" />
+                            </div>
+                            <div class="hero-text">
+                                <div class="hero-title-row">
+                                    <h1 class="hero-title">Mapa</h1>
+                                </div>
+                            </div>
+                        </section>
+
+                        <!-- Duas opções abaixo: Cartazes e Transmissões -->
+                        <div class="grid-cards">
+                            <div class="card small-card" onclick="app.openSection('cartazes')" role="button" aria-label="Cartazes do Círio">
+                                <img src="img/icones/cartazes.svg" alt="Cartazes do Círio" class="card-icon">
+                                <div class="card-text">
+                                    <div class="card-title">Cartazes do Círio</div>
+                                    <div class="card-sub">Galeria de cartazes do Círio</div>
+                                </div>
+                            </div>
+
+                            <div class="card small-card" onclick="app.openSection('transmissoes')" role="button" aria-label="Transmissões">
+                                <img src="img/icones/transmissoes.svg" alt="Transmissões" class="card-icon">
+                                <div class="card-text">
+                                    <div class="card-title">Transmissões</div>
+                                    <div class="card-sub">Assista transmissões ao vivo</div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Link útil abaixo (full width) -->
+                        <div class="grid-cards">
+                            <div class="card wide-card" onclick="app.openSection('links')" role="button" aria-label="Links Úteis">
+                                <img src="img/icones/links.svg" alt="Links" class="card-icon">
+                                <div class="card-text">
+                                    <div class="card-title">Links Úteis</div>
+                                    <div class="card-sub">Acesse informações e serviços úteis</div>
+                                </div>
+                            </div>
+                        </div>
+
+                    </div>
+                </div>
+            </div>
+
+            <!-- CARTAZES -->
+            <div class="page" data-name="cartazes">
+                <div class="navbar"><div class="navbar-inner"><div class="left"><a class="link" onclick="app.closeSection('cartazes')"><i class="fa-solid fa-arrow-left"></i><span>Voltar</span></a></div><div class="title">Cartazes</div></div></div>
+                <div class="page-content"><div class="page-inner"><h2 class="page-header">Cartazes</h2><div class="gallery-grid" id="cartazesList"></div></div></div>
+            </div>
+
+            <!-- TRANSMISSÕES -->
+            <div class="page" data-name="transmissoes">
+                <div class="navbar"><div class="navbar-inner"><div class="left"><a class="link" onclick="app.closeSection('transmissoes')"><i class="fa-solid fa-arrow-left"></i><span>Voltar</span></a></div></div></div>
+                <div class="page-content">
+                    <div class="page-inner transmissions-shell">
+                        <section class="transmissions-header">
+                            <div class="ornament ornament-top"></div>
+                            <h1>TRANSMISSÕES</h1>
+                            <p class="transmissions-subtitle">Acompanhe ao vivo</p>
+                            <div class="ornament ornament-bottom"></div>
+                        </section>
+                        <section id="livePlayerCard" class="live-player-card" aria-label="Transmissão ao vivo">
+                            <div class="live-player-toprow">
+                                <div id="liveBadge" class="live-badge live-badge-hidden"><span class="live-dot"></span>AO VIVO</div>
+                                <div class="live-viewers"><i class="fa-solid fa-eye" aria-hidden="true"></i></div>
+                            </div>
+                            <div class="live-player-image">
+                                <img id="livePlayerImage" src="img/Emblema.png" alt="Pôster da transmissão" />
+                            </div>
+                            <div class="live-player-info">
+                                <div>
+                                    <div id="livePlayerTitle" class="live-player-title">Trasladação para Marabá</div>
+                                    <div id="livePlayerSubtitle" class="live-player-subtitle">Círio de Nazaré 2026</div>
+                                    <div id="livePlayerChannel" class="live-player-channel">Canal Oficial Círio de Nazaré</div>
+                                </div>
+                                <div class="live-player-actions">
+                                    <button type="button" class="player-action" data-action="play" aria-label="Reproduzir transmissão" title="Reproduzir transmissão"><i class="fa-solid fa-circle-play" aria-hidden="true"></i></button>
+                                </div>
+                            </div>
+                        </section>
+                        <section class="live-channel-preview-card">
+                            <div class="live-channel-preview-left">
+                                <div class="live-channel-logo-wrap">
+                                    <img class="live-channel-logo" src="img/Santuario.png" alt="Emblema do canal" />
+                                </div>
+                                <div class="live-channel-preview-text">
+                                    <a id="liveChannelLink" class="live-channel-link" href="#" target="_blank" rel="noopener noreferrer">
+                                        <div id="liveChannelName" class="live-channel-name">TV Círio Marabá</div>
+                                        <div id="liveChannelHandle" class="live-channel-handle">@TVCiriodeNazareMaraba</div>
+                                    </a>
+                                    <a id="liveChannelUrl" class="live-channel-url" href="#" target="_blank" rel="noopener noreferrer">Visitar canal</a>
+                                </div>
+                            </div>
+                            <div class="live-channel-preview-illustration" aria-hidden="true">
+                                <svg viewBox="0 0 180 100" xmlns="http://www.w3.org/2000/svg" fill="none">
+                                    <path d="M18 90V30L48 15L78 30V90H18Z" fill="#D8A84D" opacity=".18"/>
+                                    <path d="M110 90V45L140 30L170 45V90H110Z" fill="#D8A84D" opacity=".12"/>
+                                    <path d="M68 70H88V90H68V70Z" fill="#D8A84D" opacity=".24"/>
+                                    <path d="M118 70H138V90H118V70Z" fill="#D8A84D" opacity=".24"/>
+                                    <path d="M88 37L95 20L102 37L98 37L98 70H92V37H88Z" fill="#D8A84D" opacity=".36"/>
+                                </svg>
+                            </div>
+                        </section>
+                    </div>
+                </div>
+            </div>
+
+            <!-- LINKS ÚTEIS -->
+            <div class="page" data-name="links">
+                <div class="navbar"><div class="navbar-inner"><div class="left"><a class="link" onclick="app.closeSection('links')"><i class="fa-solid fa-arrow-left"></i><span>Voltar</span></a></div><div class="title">Links Úteis</div></div></div>
+                <div class="page-content">
+                    <div class="page-inner">
+                        <section class="transmissions-header">
+                            <div class="ornament ornament-top"></div>
+                            <h1>LINKS ÚTEIS</h1>
+                            <p class="transmissions-subtitle">Acesse rapidamente os principais serviços</p>
+                            <div class="ornament ornament-bottom"></div>
+                        </section>
+                        <div class="links-list" id="linksList"></div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- EVENTOS -->
+            <div class="page" data-name="eventos">
+                <div class="navbar"><div class="navbar-inner"><div class="left"><a class="link" onclick="app.closeSection('eventos')"><i class="fa-solid fa-arrow-left"></i><span>Voltar</span></a></div><div class="title">EVENTOS</div></div></div>
+                <div class="page-content"><div class="page-inner">
+                    <section class="transmissions-header events-header">
+                        <div class="ornament ornament-top"></div>
+                        <h1>EVENTOS</h1>
+                        <p class="transmissions-subtitle">Acompanhe toda a programação</p>
+                        <div class="ornament ornament-bottom"></div>
+                    </section>
+                    <div class="events-search-wrapper">
+                        <div class="event-searchbar">
+                            <i class="fa-solid fa-magnifying-glass"></i>
+                            <input id="eventSearchInput" type="search" placeholder="Pesquisar eventos..." aria-label="Pesquisar eventos" />
+                        </div>
+                    </div>
+                    <section class="events-calendar-card f7-card">
+                        <div class="events-calendar-title">
+                            <span class="calendar-label">CALENDÁRIO 2026</span>
+                        </div>
+                        <div id="eventsCalendar" class="events-calendar"></div>
+                    </section>
+                    <section id="eventHighlightCard" class="event-highlight-card f7-card"></section>
+                    <div class="event-filter-bar" id="eventFilters"></div>
+                    <div class="events-list" id="eventsList"></div>
+                    <section class="event-institutional-card">
+                        <div class="event-institutional-left">
+                            <div class="event-institutional-icon"><i class="fa-solid fa-bell"></i></div>
+                            <div>
+                                <div class="event-institutional-title">Nunca perca um evento</div>
+                                <div class="event-institutional-description">Acompanhe toda a programação oficial e receba lembretes automáticos para participar dos eventos do Santuário Nossa Senhora de Nazaré.</div>
+                            </div>
+                        </div>
+                        <div class="event-institutional-illustration" aria-hidden="true">
+                            <svg viewBox="0 0 88 72" xmlns="http://www.w3.org/2000/svg" fill="none">
+                                <path d="M16 52V28L30 20L44 28V52H16Z" stroke="#D8A84D" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                                <path d="M10 52H50" stroke="#D8A84D" stroke-width="2" stroke-linecap="round"/>
+                                <path d="M22 20V12" stroke="#D8A84D" stroke-width="2" stroke-linecap="round"/>
+                                <path d="M22 8L26 12L30 8" stroke="#D8A84D" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                                <path d="M58 52V18L70 12L82 18V52H58Z" stroke="#D8A84D" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                                <path d="M58 32H82" stroke="#D8A84D" stroke-width="2" stroke-linecap="round"/>
+                            </svg>
+                        </div>
+                    </section>
+                </div></div>
+            </div>
+
+            <!-- PERFIL -->
+            <div class="page" data-name="perfil">
+                <div class="navbar"><div class="navbar-inner"><div class="left"><a class="link" onclick="app.closeSection('perfil')"><i class="fa-solid fa-arrow-left"></i><span>Voltar</span></a></div><div class="title">Perfil</div></div></div>
+                <div class="page-content"><div class="page-inner"><h2 class="page-header">Perfil</h2><div class="page-note">Dados do usuário e preferências estarão disponíveis aqui.</div></div></div>
+            </div>
+        </div>
+
+        <div class="bottom-nav" aria-label="Barra de navegação">
+            <button class="nav-item active" type="button" data-section="home" onclick="app.openSection('home')">
+                <span class="nav-icon"><i class="fa-solid fa-house-chimney"></i></span>
+                <span class="nav-label">Início</span>
+            </button>
+            <button class="nav-item" type="button" data-section="eventos" onclick="app.openSection('eventos')">
+                <span class="nav-icon"><i class="fa-solid fa-calendar-days"></i></span>
+                <span class="nav-label">Eventos</span>
+            </button>
+        </div>
+    </div>
+
+    <div id="eventSheetOverlay" class="sheet-overlay"></div>
+    <div id="eventReminderSheet" class="event-reminder-sheet"></div>
+
+    <div id="locationPermissionModal" class="location-permission-modal" aria-hidden="true">
+        <div class="location-permission-content" role="dialog" aria-modal="true" aria-labelledby="locationPermissionTitle">
+            <button type="button" class="location-permission-close" aria-label="Fechar aviso">×</button>
+            <div class="location-permission-icon-wrap">
+                <div class="location-permission-icon">!</div>
+            </div>
+            <h2 id="locationPermissionTitle" class="location-permission-title">Atenção</h2>
+            <h3 class="location-permission-subtitle">Para usar o "Sensor de Proximidade", ative a opção de localização "Sempre permitir" nas configurações do app, já que precisamos saber onde você está mesmo com o app fechado ou em segundo plano.</h3>
+            <button type="button" class="location-permission-ok">OK</button>
+        </div>
+    </div>
+
+    <!-- Cartaz modal (visualização em tela cheia) -->
+    <div id="cartazModal" class="modal" aria-hidden="true">
+        <div class="modal-content cartaz-modal-content">
+            <div class="cartaz-controls">
+                <a id="cartazDownload" class="btn btn-primary" href="#" download>Baixar</a>
+                <button id="cartazZoom" class="btn btn-secondary">Zoom</button>
+            </div>
+            <button id="cartazClose" class="close" aria-label="Fechar">×</button>
+            <img id="cartazModalImg" src="" alt="Cartaz" />
+        </div>
+    </div>
+
+    <!-- Preserve Cordova + libs -->
+    <script src="cordova.js"></script>
+    <script src="lib/framework7/framework7-bundle.min.js"></script>
+    <script src="js/index.js"></script>
+    <script src="js/percurso.js"></script>
+    <script src="js/gps.js"></script>
+    <script src="js/ui.js"></script>
+    <script src="js/firebase.js"></script>
+    <script src="js/tracker.js"></script>
+    <script src="js/firebaseService.js"></script>
+    <script src="js/trackingService.js"></script>
+    <script src="js/utils.js"></script>
+    <script src="js/gpsService.js"></script>
+    <script src="js/uiService.js"></script>
+    <script src="data/links/live-transmission.js?v=2"></script>
+    <script src="js/app.js?v=8"></script>
+    <script src="js/patrocinadores.js"></script>
+    <script src="js/cartazes.js"></script>
+    <script type="module" src="js/fcm-register.js"></script>
+    <script src="js/fcm-native.js"></script>
+</body>
+</html>
+
+

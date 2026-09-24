@@ -1,0 +1,26 @@
+📱 ADICIONAR IMAGEM DE FUNDO
+===========================
+
+Para adicionar a imagem da berlinda como fundo:
+
+1. SALVAR A IMAGEM:
+   • A imagem que você compartilhou deve ser salva como:
+     c:\apps\cirio\www\img\berlinda.jpg
+   
+   • Faça download da imagem e coloque nessa pasta
+
+2. CSS JÁ ESTÁ PRONTO:
+   ✓ O CSS foi ajustado para usar: background: url('../img/berlinda.jpg')
+   ✓ A imagem será exibida no topo com cobertura total
+   ✓ Um overlay branco semi-transparente é exibido sobre a imagem
+   ✓ Isso garante que o texto fique legível
+
+3. PRÓXIMO PASSO:
+   • Salve a imagem como "berlinda.jpg" em c:\apps\cirio\www\img\
+   • Recompile: cordova build android --debug
+   • Instale: cordova run android --debug
+
+4. RESULTADO:
+   ✨ A berlinda ficará como fundo bonito do app!
+   ✨ O conteúdo (cards) fica sobre um painel semi-transparente
+   ✨ Totalmente visível e legível

@@ -1,0 +1,111 @@
+📱 NOVO LAYOUT DA TELA PRINCIPAL - LOCALIZA A BERLINDA
+=========================================================
+
+🎨 ESTRUTURA DO LAYOUT:
+
+┌─────────────────────────────────────────┐
+│  📱 HEADER                              │
+│  🎉 Localiza a Berlinda                 │
+│  Rastreamento em Tempo Real             │
+└─────────────────────────────────────────┘
+│
+│  ┌─────────────────────────────────────┐
+│  │  CARD GRANDE - MAPA (Destaque)      │
+│  │                                     │
+│  │        📍 Mapa                      │
+│  │  Rastreamento em Tempo Real         │
+│  │                                     │
+│  └─────────────────────────────────────┘
+│
+│  ┌──────────┬──────────┬──────────┐
+│  │ 📋       │ 📺       │ 🔗       │
+│  │CARTAZES  │TRANSMISS │LINKS     │
+│  │          │  ÕES     │ ÚTEIS    │
+│  └──────────┴──────────┴──────────┘
+│
+└─────────────────────────────────────────┘
+
+
+⚙️ FUNCIONALIDADES:
+
+1. CARD MAPA (Grande em Vermelho)
+   ├─ Clique abre modal com:
+   │  ├─ Mapa Interativo
+   │  ├─ 4 Cards de Informação (Distância, Tempo)
+   │  └─ Botões de Controle (Iniciar, Parar, Resetar, Info)
+   └─ Ícone pulsante 📍
+
+2. CARD CARTAZES
+   ├─ Clique abre modal
+   └─ Conteúdo em desenvolvimento
+
+3. CARD TRANSMISSÕES
+   ├─ Clique abre modal
+   └─ Conteúdo em desenvolvimento
+
+4. CARD LINKS ÚTEIS
+   ├─ Clique abre modal
+   └─ Links úteis sobre a procissão
+
+
+🎯 FLUXO DE NAVEGAÇÃO:
+
+Tela Principal (Index)
+├─ Clique em Mapa → Modal Mapa (Rastreamento)
+├─ Clique em Cartazes → Modal Cartazes
+├─ Clique em Transmissões → Modal Transmissões
+└─ Clique em Links Úteis → Modal Links
+
+
+🎨 DESIGN RESPONSIVO:
+
+MOBILE (< 768px):
+• Card Mapa: 100% da largura, ~180px altura
+• Cards Opções: Grid 3 colunas, ~120px
+• Spacing: 12px entre cards
+
+DESKTOP (≥ 768px):
+• Card Mapa: 100% da largura, ~220px altura
+• Cards Opções: Grid 3 colunas, ~140px
+• Spacing: 16px entre cards
+• Ícones maiores (50px → 80px)
+
+
+🎨 CORES:
+
+Mapa:         Gradiente Vermelho (#ff6b6b → #ff8a65)
+Cartazes:     Branco com sombra
+Transmissões: Branco com sombra
+Links Úteis:  Branco com sombra
+Modais:       Fundo branco com transição fade
+Overlay:      Preto semi-transparente (rgba(0,0,0,0.5))
+
+
+📦 ARQUIVOS MODIFICADOS:
+
+1. www/index.html
+   ✓ Novo layout principal com cards
+   ✓ Modais para Mapa, Cartazes, Transmissões, Links
+
+2. www/css/index.css
+   ✓ Estilos do card-mapa (grande, gradiente, bounce)
+   ✓ Estilos dos card-option (grid 3 colunas)
+   ✓ Estilos dos modais (fade, slide animations)
+   ✓ Responsividade mobile/desktop
+
+3. www/js/app.js
+   ✓ Métodos goToMap(), closeMap()
+   ✓ Métodos openSection(), closeSection()
+   ✓ Lógica de navegação entre modais
+
+
+✨ PRÓXIMOS PASSOS:
+
+1. Teste o layout em navegador (F12)
+2. Clique nos cards para abrir/fechar modais
+3. Customize o conteúdo dos modais
+4. Ajuste cores/tamanhos conforme necessário
+5. Compile para Android: cordova build android --debug
+
+
+🚀 PRONTO PARA USO!

@@ -1,0 +1,20 @@
+name: cirio_gps_app
+description: Aplicativo Flutter para rastreamento em tempo real da berlinda via Firebase Realtime Database.
+publish_to: 'none'
+version: 1.0.0+1
+
+environment:
+  sdk: '>=3.2.0 <4.0.0'
+
+dependencies:
+  flutter:
+    sdk: flutter
+  firebase_core: ^2.20.0
+  firebase_database: ^10.1.0
+  flutter_map: ^4.2.1
+  latlong2: ^0.9.0
+
+flutter:
+  uses-material-design: true
+  assets:
+    - assets/images/

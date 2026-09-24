@@ -1,0 +1,230 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Rastreamento</title>
+  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css">
+  <style>
+    html, body {
+      margin: 0;
+      height: 100%;
+      font-family: Roboto, Arial, sans-serif;
+      background: #eef2f6;
+    }
+
+    #map {
+      height: 100%;
+      width: 100%;
+    }
+
+    .leaflet-control-layers {
+      border-radius: 12px;
+      box-shadow: 0 4px 18px rgba(0, 0, 0, 0.18);
+      border: 0;
+    }
+  </style>
+</head>
+<body>
+  <div id="map"></div>
+
+  <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+  <script>
+    const MAP_CENTER = [-5.3689, -49.117];
+    const map = L.map('map', { zoomControl: true }).setView(MAP_CENTER, 13);
+
+    const baseLayers = {
+      'Mapa padrão': L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+        maxZoom: 19,
+        attribution: '&copy; OpenStreetMap contributors'
+      }),
+      'Satélite': L.tileLayer('https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}', {
+        maxZoom: 19,
+        attribution: 'Tiles &copy; Esri'
+      }),
+      'Relevo': L.tileLayer('https://{s}.tile.opentopomap.org/{z}/{x}/{y}.png', {
+        maxZoom: 17,
+        attribution: 'Map data: &copy; OpenStreetMap contributors, SRTM | Map style: &copy; OpenTopoMap'
+      }),
+      'Escuro': L.tileLayer('https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png', {
+        maxZoom: 20,
+        attribution: '&copy; OpenStreetMap contributors &copy; CARTO'
+      })
+    };
+
+    const defaultLayer = baseLayers['Mapa padrão'];
+    defaultLayer.addTo(map);
+    L.control.layers(baseLayers, null, { collapsed: false, position: 'topright' }).addTo(map);
+
+    const DESTINO_KEY = 'cirio_rastreador_destino';
+    const DEFAULT_DESTINATION = { lat: -5.3689, lng: -49.117 };
+
+    const berlindaIcon = L.divIcon({
+      className: 'berlinda-marker',
+      html: `
+        <div style="
+          width: 18px;
+          height: 18px;
+          background: #d4af37;
+          border: 3px solid #fff;
+          border-radius: 50%;
+          box-shadow: 0 0 0 4px rgba(212, 175, 55, 0.25), 0 2px 10px rgba(0,0,0,.35);
+          position: relative;
+        "></div>
+      `,
+      iconSize: [18, 18],
+      iconAnchor: [9, 9],
+      popupAnchor: [0, -10]
+    });
+
+    const destinoMarker = L.marker(DEFAULT_DESTINATION, { draggable: true }).addTo(map);
+    const rota = L.polyline([], { color: '#1a73e8', weight: 5, opacity: 0.85 }).addTo(map);
+    const rotaDestino = L.polyline([], { color: '#f39c12', weight: 4, opacity: 0.8, dashArray: '8 8' }).addTo(map);
+    const posicoes = [];
+    let rotaRoadCache = [];
+
+    function carregarDestino() {
+      try {
+        const salvo = localStorage.getItem(DESTINO_KEY);
+        if (!salvo) return { ...DEFAULT_DESTINATION };
+        const dados = JSON.parse(salvo);
+        if (!dados || typeof dados.lat !== 'number' || typeof dados.lng !== 'number') {
+          return { ...DEFAULT_DESTINATION };
+        }
+        return { lat: dados.lat, lng: dados.lng };
+      } catch (err) {
+        console.warn('Não foi possível ler destino salvo:', err);
+        return { ...DEFAULT_DESTINATION };
+      }
+    }
+
+    function salvarDestino(destino) {
+      try {
+        localStorage.setItem(DESTINO_KEY, JSON.stringify(destino));
+      } catch (err) {
+        console.warn('Não foi possível salvar destino:', err);
+      }
+    }
+
+    function atualizarDestinoVisual() {
+      const destino = carregarDestino();
+      destinoMarker.setLatLng([destino.lat, destino.lng]);
+      destinoMarker.bindPopup(`Destino fixo: ${destino.lat.toFixed(5)}, ${destino.lng.toFixed(5)}`);
+      atualizarRotaDestino();
+    }
+
+    async function buscarRotaPorRua(origem, destino) {
+      if (!origem || !destino) return null;
+      const url = `https://router.project-osrm.org/route/v1/driving/${origem.lng},${origem.lat};${destino.lng},${destino.lat}?overview=full&geometries=geojson&alternatives=false`;
+
+      try {
+        const resposta = await fetch(url, { headers: { Accept: 'application/json' } });
+        if (!resposta.ok) {
+          throw new Error(`OSRM ${resposta.status}`);
+        }
+        const dados = await resposta.json();
+        const coords = dados && dados.routes && dados.routes[0] && dados.routes[0].geometry && dados.routes[0].geometry.coordinates;
+        if (!Array.isArray(coords) || coords.length === 0) return null;
+        return coords.map(([lng, lat]) => ({ lat, lng }));
+      } catch (err) {
+        console.warn('Rota por rua indisponível, usando fallback:', err);
+        return null;
+      }
+    }
+
+    async function atualizarRotaDestino() {
+      const destino = carregarDestino();
+      const ultima = posicoes[posicoes.length - 1];
+      if (!ultima) {
+        rotaDestino.setLatLngs([[destino.lat, destino.lng], [destino.lat, destino.lng]]);
+        return;
+      }
+
+      const origem = { lat: ultima[0], lng: ultima[1] };
+      const rotaRua = await buscarRotaPorRua(origem, destino);
+
+      if (rotaRua && rotaRua.length > 1) {
+        rotaDestino.setLatLngs(rotaRua);
+        rotaRoadCache = rotaRua;
+      } else {
+        rotaDestino.setLatLngs([
+          [origem.lat, origem.lng],
+          [destino.lat, destino.lng]
+        ]);
+      }
+    }
+
+    function definirDestino(latlng) {
+      const destino = { lat: latlng.lat, lng: latlng.lng };
+      salvarDestino(destino);
+      destinoMarker.setLatLng([destino.lat, destino.lng]);
+      destinoMarker.bindPopup(`Destino fixo: ${destino.lat.toFixed(5)}, ${destino.lng.toFixed(5)}`);
+      atualizarRotaDestino();
+    }
+
+    function formatDate(ts) {
+      const d = new Date(ts || Date.now());
+      return d.toLocaleTimeString('pt-BR', { hour: '2-digit', minute: '2-digit', second: '2-digit' });
+    }
+
+    function renderPosicao(data) {
+      if (!data || typeof data.lat !== 'number' || typeof data.lng !== 'number') return;
+
+      const lat = Number(data.lat);
+      const lng = Number(data.lng);
+      const ts = data.ts || Date.now();
+
+      const pos = [lat, lng];
+      posicoes.push(pos);
+      if (posicoes.length > 20) posicoes.shift();
+      rota.setLatLngs(posicoes);
+      atualizarRotaDestino().catch(() => {});
+
+      if (!window._berlindaMapMarker) {
+        window._berlindaMapMarker = L.marker(pos, { icon: berlindaIcon }).addTo(map);
+        window._berlindaMapMarker.bindPopup('Você está aqui');
+      } else {
+        window._berlindaMapMarker.setLatLng(pos);
+      }
+
+      map.setView(pos, Math.max(map.getZoom(), 15));
+    }
+
+    destinoMarker.on('dragend', (event) => {
+      const ponto = event.target.getLatLng();
+      definirDestino(ponto);
+    });
+
+    const proto = location.protocol === 'https:' ? 'wss' : 'ws';
+    const socket = new WebSocket(`${proto}://${location.host}`);
+
+    socket.addEventListener('open', () => {
+    });
+
+    socket.addEventListener('message', (event) => {
+      try {
+        const data = JSON.parse(event.data);
+        if (data && data.tipo === 'posicao') {
+          renderPosicao(data);
+        }
+      } catch (err) {
+        console.warn('Mensagem do WebSocket ignorada:', err);
+      }
+    });
+
+    socket.addEventListener('close', () => {
+    });
+
+    socket.addEventListener('error', () => {
+    });
+
+    const destinoInicial = carregarDestino();
+    destinoMarker.setLatLng([destinoInicial.lat, destinoInicial.lng]);
+    destinoMarker.bindPopup(`Destino fixo: ${destinoInicial.lat.toFixed(5)}, ${destinoInicial.lng.toFixed(5)}`);
+    map.setView([destinoInicial.lat, destinoInicial.lng], 13);
+
+    renderPosicao({ lat: MAP_CENTER[0], lng: MAP_CENTER[1], ts: Date.now() });
+  </script>
+</body>
+</html>
+

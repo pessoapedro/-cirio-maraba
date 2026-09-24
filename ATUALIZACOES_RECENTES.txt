@@ -1,0 +1,87 @@
+✅ ALTERAÇÕES REALIZADAS NO APP
+
+═══════════════════════════════════════════════════════════════════
+
+🎯 PROBLEMA:
+  A tela inicial (splash screen) estava aparecendo por muito tempo
+  e com cores diferentes do tema configurado
+
+═══════════════════════════════════════════════════════════════════
+
+✨ SOLUÇÕES APLICADAS:
+
+1. REDUZIR TEMPO DE EXIBIÇÃO:
+   ✓ CSS: Tempo do splash screen reduzido de 4.5s para 1.5s
+   ✓ JS: Tempo do timeout reduzido de 5s para 2s
+   
+2. SIMPLIFICAR DESIGN:
+   ✓ Removida seção de "Apoiadores" (muitos elementos)
+   ✓ Mantido apenas: Logo + Título + Descrição
+   
+3. CORES CORRIGIDAS:
+   ✓ Fundo: Gradiente dourado (FFF8DC → DAA520)
+   ✓ Título: Marrom escuro (#8B4513)
+   ✓ Subtítulo: Dourado escuro (#B8860B)
+   ✓ Logo: Halo dourado com coroa 👑
+
+═══════════════════════════════════════════════════════════════════
+
+📋 ARQUIVOS MODIFICADOS:
+
+1. c:\apps\cirio\www\css\index.css
+   - Alterado tempo de animação do splash screen
+   - Linha 46: animation: fadeOutSplash 0.5s ease-in-out 1.5s forwards;
+
+2. c:\apps\cirio\www\js\app.js
+   - Alterado timeout do splash screen
+   - Linha 79: }, 2000); (era 5000)
+
+3. c:\apps\cirio\www\index.html
+   - Simplificado conteúdo do splash screen
+   - Removida seção de apoiadores
+   - Mantido apenas o essencial
+
+═══════════════════════════════════════════════════════════════════
+
+🚀 COMO ATUALIZAR NO CELULAR:
+
+1. Abra PowerShell COMO ADMINISTRADOR
+
+2. Execute:
+   cd c:\apps\cirio
+   adb install -r app-debug.apk
+
+3. Ou use o script automático:
+   cd c:\apps\cirio
+   .\InstalarNocelular.ps1
+
+═══════════════════════════════════════════════════════════════════
+
+📱 RESULTADO ESPERADO:
+
+✓ Splash screen aparece por ~2 segundos (muito mais rápido)
+✓ Cores em tom dourado (igual ao app)
+✓ Logo com coroa brilhando
+✓ Texto "Círio de Nazaré" centralizado
+✓ Palavra "Carregando..." abaixo
+✓ Depois desaparece automaticamente
+✓ App carrega com a página inicial
+
+═══════════════════════════════════════════════════════════════════
+
+💡 DICA:
+
+Se quiser remover completamente o splash screen, basta mudar
+na linha 46 do index.css:
+
+  animation: fadeOutSplash 0.5s ease-in-out 1.5s forwards;
+
+Para:
+
+  animation: fadeOutSplash 0.5s ease-in-out 0s forwards;
+
+(Aparecerá instantaneamente)
+
+═══════════════════════════════════════════════════════════════════
+
+Desenvolvido com 💛 para o Círio de Nazaré

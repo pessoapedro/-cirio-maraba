@@ -1,0 +1,16 @@
+{
+  "lat": -1.4558,
+  "lng": -48.5038,
+  "accuracy": 5,
+  "timestamp": 1710700000000,
+  "source": "seeded",
+  "updatedAt": "2026-07-17T00:00:00Z",
+  "updates": {
+    "0001": {
+      "lat": -1.4558,
+      "lng": -48.5038,
+      "accuracy": 5,
+      "timestamp": 1710700000000
+    }
+  }
+}

@@ -1,0 +1,115 @@
+📱 COMO RODAR O APP NO CELULAR - RESUMO EXECUTIVO
+
+═══════════════════════════════════════════════════════════════════
+
+✅ PRÉ-REQUISITOS:
+  ✓ Celular Android (6.0+)
+  ✓ Cabo USB
+  ✓ ADB instalado
+  ✓ App já compilado (app-debug.apk)
+
+═══════════════════════════════════════════════════════════════════
+
+🔴 ETAPA 1: PREPARAR CELULAR (5 MIN)
+
+1. Abra CONFIGURAÇÕES
+2. Toque em "SOBRE TELEFONE"
+3. Toque 7 VEZES em "NÚMERO DA COMPILAÇÃO"
+4. Volte para CONFIGURAÇÕES
+5. Abra "OPÇÕES DO DESENVOLVEDOR"
+6. Ative "DEPURAÇÃO USB"
+7. Clique OK no aviso de segurança
+
+═══════════════════════════════════════════════════════════════════
+
+🟡 ETAPA 2: CONECTAR CELULAR (2 MIN)
+
+1. Pegue o cabo USB
+2. Conecte no celular
+3. Conecte no PC
+4. Uma caixa aparecerá no celular
+5. Clique "PERMITIR" (marque "Sempre confiar")
+
+═══════════════════════════════════════════════════════════════════
+
+🟠 ETAPA 3: VERIFICAR CONEXÃO (1 MIN)
+
+Abra PowerShell COMO ADMINISTRADOR e execute:
+
+    adb devices
+
+Se ver "device" na lista = ✅ CONECTADO!
+
+═══════════════════════════════════════════════════════════════════
+
+🟢 ETAPA 4: INSTALAR APP (2 MIN)
+
+OPÇÃO A - AUTOMÁTICO (RECOMENDADO):
+
+Abra PowerShell COMO ADMINISTRADOR e execute:
+
+    cd c:\apps\cirio
+    .\InstalarNocelular.ps1
+
+OPÇÃO B - MANUAL:
+
+    cd c:\apps\cirio
+    adb install -r app-debug.apk
+
+═══════════════════════════════════════════════════════════════════
+
+🎉 ETAPA 5: ABRIR APP
+
+Procure em "MEUS APPS" por "Círio de Nazaré"
+Clique para abrir!
+
+═══════════════════════════════════════════════════════════════════
+
+❓ PROBLEMAS?
+
+"List of devices attached" VAZIO:
+  → Desconecte e reconecte o cabo
+  → Verifique se Depuração USB está ativada
+  → Tente: adb kill-server && adb start-server && adb devices
+
+"unauthorized":
+  → Clique "PERMITIR" no celular novamente
+  → Marque "Sempre confiar"
+
+"adb: command not found":
+  → PowerShell precisa de privilégios ADMINISTRADOR
+  → Abra com botão direito > "Executar como administrador"
+
+═══════════════════════════════════════════════════════════════════
+
+📋 ARQUIVOS CRIADOS PARA VOCÊ:
+
+1. GUIA_INSTALACAO_CELULAR.md - Guia completo e detalhado
+2. CHECKLIST_CELULAR.md - Checklist passo a passo
+3. InstalarNocelular.ps1 - Script PowerShell automático
+
+═══════════════════════════════════════════════════════════════════
+
+💡 DICA RÁPIDA:
+
+Se não conseguir com os comandos acima, copie e cole isto no 
+PowerShell COMO ADMINISTRADOR:
+
+cd c:\apps\cirio; adb devices
+
+Se vir seu celular, execute:
+
+cd c:\apps\cirio; adb install -r app-debug.apk; adb shell am start -n br.com.cirio/.MainActivity
+
+═══════════════════════════════════════════════════════════════════
+
+🎯 PRÓXIMA ETAPA:
+
+Depois que o app iniciar:
+  1. Permita acesso à Localização (GPS)
+  2. Clique em "MAPA"
+  3. Clique em "INICIAR RASTREAMENTO"
+
+═══════════════════════════════════════════════════════════════════
+
+Desenvolvido com 💛 para o Círio de Nazaré

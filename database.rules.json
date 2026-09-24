@@ -1,0 +1,24 @@
+{
+  "rules": {
+    ".read": false,
+    ".write": false,
+    "locations": {
+      "current": {
+        ".read": "auth != null",
+        ".write": false
+      }
+    },
+    "tracker": {
+      ".read": "auth != null",
+      ".write": false
+    },
+    "appData": {
+      ".read": "auth != null",
+      ".write": false
+    },
+    "fcmTokens": {
+      ".read": false,
+      ".write": false
+    }
+  }
+}

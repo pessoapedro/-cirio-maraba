@@ -1,0 +1,70 @@
+{
+  "locale": "pt-BR",
+  "language": "Português (Brasil)",
+  "app": {
+    "name": "Localiza a Berlinda",
+    "descriptionShort": "Acompanhe a berlinda, eventos e transmissões do Círio de Nazaré.",
+    "descriptionFull": "O Localiza a Berlinda ajuda você a acompanhar o Círio de Nazaré com informações úteis em um só lugar.\n\nCom o aplicativo, você pode:\n- acompanhar a localização e o andamento da berlinda em tempo real;\n- consultar eventos e a programação do Círio;\n- receber informações e lembretes sobre eventos;\n- assistir a transmissões ao vivo;\n- visualizar cartazes históricos e atuais do Círio;\n- acessar links e serviços oficiais relacionados ao Santuário Nossa Senhora de Nazaré.\n\nO aplicativo utiliza a localização do dispositivo somente quando você autoriza e quando esse recurso é necessário para as funções de mapa, rastreamento e proximidade."
+  },
+  "navigation": {
+    "home": "Início",
+    "events": "Eventos",
+    "posters": "Cartazes",
+    "transmissions": "Transmissões",
+    "usefulLinks": "Links Úteis",
+    "profile": "Perfil",
+    "back": "Voltar",
+    "close": "Fechar"
+  },
+  "home": {
+    "map": "Mapa",
+    "postersTitle": "Cartazes do Círio",
+    "postersSubtitle": "Galeria de cartazes do Círio",
+    "transmissionsTitle": "Transmissões",
+    "transmissionsSubtitle": "Assista transmissões ao vivo",
+    "usefulLinksTitle": "Links Úteis",
+    "usefulLinksSubtitle": "Acesse informações e serviços úteis",
+    "appDetailsTitle": "Detalhes do app",
+    "appDetailsSubtitle": "Consulte a Política de Privacidade"
+  },
+  "events": {
+    "title": "Eventos",
+    "subtitle": "Acompanhe toda a programação",
+    "searchPlaceholder": "Pesquisar eventos...",
+    "calendar": "Calendário 2026",
+    "noResults": "Nenhum evento encontrado.",
+    "reminder": "Lembrete",
+    "reminders": "Lembretes"
+  },
+  "tracking": {
+    "location": "Localização",
+    "distance": "Distância",
+    "time": "Tempo",
+    "start": "Iniciar rastreamento",
+    "stop": "Parar rastreamento",
+    "reset": "Resetar",
+    "permissionTitle": "Atenção",
+    "permissionMessage": "Para usar o Sensor de Proximidade, ative a opção de localização nas configurações do app.",
+    "permissionConfirm": "OK"
+  },
+  "privacy": {
+    "title": "Política de Privacidade",
+    "lastUpdated": "Última atualização: 24 de setembro de 2026",
+    "data": "Dados tratados",
+    "purposes": "Finalidades e base legal",
+    "sharing": "Compartilhamento e armazenamento",
+    "rights": "Seus direitos",
+    "security": "Segurança e contato"
+  },
+  "common": {
+    "live": "Ao vivo",
+    "visitChannel": "Visitar canal",
+    "openInMaps": "Abrir no Maps",
+    "download": "Baixar",
+    "zoom": "Zoom",
+    "yes": "Sim",
+    "no": "Não",
+    "loading": "Carregando...",
+    "error": "Ocorreu um erro. Tente novamente."
+  }
+}
